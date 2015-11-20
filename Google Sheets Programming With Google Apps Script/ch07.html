@@ -1,0 +1,246 @@
+<!-- 
+Code Example 7.2 
+index.html
+-->
+<div>
+  <b>Add Row To Spreadsheet</b><br />
+  <form>
+    First name: <br />
+    <input id="firstname" name="firstName" type="text" />
+    <br />
+    Last name: <br />
+    <input id="lastname" name="lastName" type="text" />
+    <br />
+   <input onclick="formSubmit()" type="button" value="Add Row" />
+   <input onclick="google.script.host.close()" type="button" value="Exit" />
+  </form>
+  <script type="text/javascript">
+        function formSubmit() {
+            google.script.run.getValuesFromForm(document.forms[0]);
+        }
+  </script>
+</div>
+
+<!-- Code Example 7.3 -->
+<div>
+  <p><b>Form using table for layout</b></p>
+  <hr />
+  <form>
+    <table>
+      <tr>
+        <td>Database Table Name:</td>
+        <td><input id="table_name" name="table_name" type="text" /></td>
+      </tr>
+      <tr>
+        <td>Relational Database Name:</td>
+        <td><select name="rdbms_name" id="rdbms_name">
+              <option value="postgres">PostgrSQL</option>
+              <option value="mysql">MySQL</option>
+              <option value="sqlite">SQLite</option>
+            </select></td>
+     </tr>
+     <tr>
+      <td>Name For New Spreadsheet:</td>
+      <td><input id="new_spreadsheet_name" name="new_spreadsheet_name" type="text" /></td>
+     </tr>
+    <tr>
+      <td>Name For New Sheet:</td>
+      <td><input id="new_sheet_name" name="new_sheet_name" type="text" /></td>
+    </tr>
+  </table>
+   <input onclick="alert('Clicked button')" type="button" value="Make SQL" />
+   <input onclick="google.script.host.close()" type="button" value="Exit" />
+  </form>
+</div>
+
+<!-- Code example 7-4 -->
+<style>
+  div {
+    background-color: #DCDCDC;
+  }
+  fieldset {
+    display: inline;
+    font-weight: bold;
+  }
+  label {
+    clear: left;
+    float: left;
+    width: 10em; 
+    text-align: right; 
+    margin-right: 1em;
+    font-weight: bold;
+  }
+  input {
+    background-color: #FFFFFF;
+    width: 14em;
+    float: left; 
+  }
+  .button {
+    float: left;
+    margin-left: 5em;
+    background-color: #FFFFFF; 
+    color: 000000;
+    margin-top: 1em;
+    font-weight: bold;
+  }
+</style>
+<div>
+  <form>
+    <fieldset>
+      <legend>GUI Input</legend>
+      <label>First Name</label>
+      <input type="text" id="first-name" name="firstName"/>
+      <label>Last Name</label>
+      <input type="text" id="last-name" name="lastName"/>      
+      <label>Address</label>
+      <input type = "text" id = "user-address" name="userAddress"/>
+      <label>Zip Code</label>
+      <input type=text id="zip-code" name="zipCode" pattern="(\d{5}([\-]\d{4})?)" 
+                          placeholder="US Zip Code Only"/>
+      <label>Phone</label>
+      <input type="text" id="user-phone" name="userPhone" 
+                         placeholder="US phone number"/>
+      <label>Choose A Date</label>
+      <input type="date" id="chosen-date" name="chosenDate" 
+                         placeholder="Pick a date"/>
+      <label>User Email</label>
+      <input type="email" id="user-email" name="userEmail" 
+                          placeholder="user@domain.com" required/>
+      <input onclick="formSubmit()" type="button" value="Add Row" class="button"/>
+     <input onclick="google.script.host.close()" type="button" 
+            value="Exit" class="button"/>
+    </fieldset>
+  </form>
+</div>
+<script type="text/javascript">
+  function formSubmit() {
+    google.script.run.getValuesFromForm(document.forms[0]);
+  }
+</script>
+
+<!--
+Code Example 7-6
+Creates a GUI that gets the dropdown list elements from a Google Spreadsheet
+named range. As values are aded to, the range name is re-assigned to include
+the added values.
+-->
+<p>Getting Dropdown Values From Spreadsheet Dynamically </p>
+<hr>
+<div>
+  <form>
+    <table>
+      <tr>
+        <td>Select A City</td><td><select id="city_list"></select></td>
+      </tr>
+      <tr>
+        <td>Add other form elements here</td><td><input 
+          onclick="google.script.host.close()" 
+          type="button" value="Exit" /></td>
+      </tr>
+    </table>
+  </form>
+</div>
+<script type="text/javascript">
+    // Client-side JavaScript that uses the list returned by
+    // GAS function "getValuesForRngName()" to populate the dropdown.
+    // This is standard client-side JavaScript programming that uses
+    // DOM manipulation to get page elements and manipulate them.
+    function onSuccess(values) {
+      var opt,
+          dropDown;
+        for(i = 0;i < values.length; i +=1){
+          dropDown = document.getElementById("city_list");
+          opt = document.createElement("option");
+          dropDown.options.add(opt);
+          // Remember that GAS Range method "GetValues()" returns
+          // an array of arrays, hence two array indexes "[i][0]" here.
+          opt.text = values[i][0];
+          opt.value = values[i][0];
+       }
+    }
+    function populate(){
+      google.script.run.withSuccessHandler(onSuccess).getValuesForRngName('Cities');
+    }
+</script>
+<script>
+  // Using the "load" event to execute the function "populate"
+  window.addEventListener('load', populate);
+</script>
+<!-- Code Example 7-6 (alternative form)
+Alternative to drop-down-list code above.
+This example adds a set of radio button options to a form
+It uses the same spreadsheet range and GAS code as above
+example.
+-->
+<p>Getting Radio Button Values From Spreadsheet Dynamically </p>
+<hr>
+<div>
+<form id='test_btn_add'>
+</form> 
+</div>
+<script type="text/javascript">
+    // Add a set of radio buttons based on range values.
+    function onSuccess(values) {
+      var radioInput,
+          form = document.getElementById('test_btn_add'),
+          label;
+        for(var i = 0;i < values.length; i +=1){
+          //alert(values[i][0]);
+          label = document.createElement("label");
+          radioInput = document.createElement('input');
+          radioInput.setAttribute('type', 'radio');
+          radioInput.setAttribute('name', 'cities');
+          radioInput.setAttribute('id', 'cities');
+          radioInput.setAttribute('value', values[i][0]);
+          label.appendChild(radioInput);
+          label.innerHTML += values[i][0];
+          form.appendChild(label);
+       }
+    }
+    function populate(){
+      google.script.run.withSuccessHandler(onSuccess).getValuesForRngName('Cities');
+    }
+</script>
+<script>
+  // Using the "load" event to execute the function "populate"
+  window.addEventListener('load', populate);
+</script>
+
+
+<!--
+Code Example 7-7
+Form code taken from http://www.tutorialspoint.com/bootstrap/bootstrap_forms.htm
+-->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+<div>
+<form class="form-horizontal" role="form">
+   <div class="form-group">
+      <label for="firstname" class="col-sm-2 control-label">First Name</label>
+      <div class="col-sm-10">
+         <input type="text" class="form-control" id="firstname" 
+            placeholder="Enter First Name">
+      </div>
+   </div>
+   <div class="form-group">
+      <label for="lastname" class="col-sm-2 control-label">Last Name</label>
+      <div class="col-sm-10">
+         <input type="text" class="form-control" id="lastname" 
+            placeholder="Enter Last Name">
+      </div>
+   </div>
+   <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+         <div class="checkbox">
+            <label>
+               <input type="checkbox"> Remember me
+            </label>
+         </div>
+      </div>
+   </div>
+   <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-10">
+         <button type="submit" class="btn btn-default">Sign in</button>
+      </div>
+   </div>
+</form>
+</div>
